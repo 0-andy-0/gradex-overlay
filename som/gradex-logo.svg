@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="12.390052mm"
+   height="9.6807642mm"
+   viewBox="0 0 12.390052 9.6807642"
+   version="1.1"
+   id="svg2499"
+   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+   sodipodi:docname="gradex-logo.svg">
+  <defs
+     id="defs2493" />
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="7.9195959"
+     inkscape:cx="114.35392"
+     inkscape:cy="11.241855"
+     inkscape:document-units="mm"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0"
+     inkscape:window-width="3360"
+     inkscape:window-height="1975"
+     inkscape:window-x="5459"
+     inkscape:window-y="-13"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata2496">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(28.873598,-244.53462)">
+    <g
+       style="display:inline;fill:#008eaa;fill-opacity:0.83137255;stroke-width:1.51313186"
+       transform="matrix(0.6595378,0.01019391,-0.01015493,0.66206986,-26.208838,57.926809)"
+       id="g38837"
+       inkscape:transform-center-x="0.35623538"
+       inkscape:transform-center-y="0.51702266">
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:comfortaa;-inkscape-font-specification:comfortaa;letter-spacing:0px;word-spacing:0px;fill:#008eaa;fill-opacity:0.83137255;stroke:none;stroke-width:0.40034944"
+         x="0.30067807"
+         y="295.56342"
+         id="text38831"><tspan
+           sodipodi:role="line"
+           id="tspan38829"
+           x="0.30067807"
+           y="295.56342"
+           style="fill:#008eaa;fill-opacity:0.83137255;stroke-width:0.40034944">gradeX</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.23333311px;line-height:1.25;font-family:comfortaa;-inkscape-font-specification:comfortaa;letter-spacing:0px;word-spacing:0px;fill:#008eaa;fill-opacity:0.83137255;stroke:none;stroke-width:0.40034944"
+         x="16.831244"
+         y="292.80469"
+         id="text38835"><tspan
+           sodipodi:role="line"
+           id="tspan38833"
+           x="16.831244"
+           y="292.80469"
+           style="font-size:1.76388884px;fill:#008eaa;fill-opacity:0.83137255;stroke-width:0.40034944">TM</tspan></text>
+    </g>
+    <g
+       id="g38843"
+       transform="matrix(1.2743041,0,0,1.2752711,-28.781527,-126.80814)"
+       style="display:inline;stroke-width:0.78444445">
+      <path
+         sodipodi:nodetypes="cccccc"
+         inkscape:connector-curvature="0"
+         id="path38839"
+         d="m 7.3366655,291.2294 c -2.3797865,1.14906 -4.2811346,5.02634 -4.2811346,5.02634 0,0 -1.4312653,-1.82882 -2.41672534,-1.82882 0,0 0.22313277,-0.58497 0.40592424,-0.80204 1.002749,0.18537 1.8899439,1.30598 1.8899439,1.30598 1.5906954,-2.22249 2.2951032,-3.22993 4.4038893,-3.70529"
+         style="fill:#008eaa;fill-opacity:0.83137255;stroke:#f9f9f9;stroke-width:0.07844441;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+      <path
+         style="fill:#008eaa;fill-opacity:0.83137255;stroke:#f9f9f9;stroke-width:0.07844441;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 0.58265671,291.2294 c 2.37978619,1.14906 4.28113429,5.02634 4.28113429,5.02634 0,0 1.4312653,-1.82882 2.4167256,-1.82882 0,0 -0.223133,-0.58497 -0.4059244,-0.80204 -1.0027491,0.18537 -1.889944,1.30598 -1.889944,1.30598 -1.5906953,-2.22249 -2.2951032,-3.22993 -4.40388906,-3.70529"
+         id="path38841"
+         inkscape:connector-curvature="0"
+         sodipodi:nodetypes="cccccc" />
+    </g>
+  </g>
+</svg>
