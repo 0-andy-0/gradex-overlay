@@ -24,7 +24,7 @@ import (
 	
 	"github.com/gocarina/gocsv"
 	"github.com/bsipos/thist"
-	"github.com/timdrysdale/parsesvg"
+	"github.com/georgekinnear/parsesvg"
 	"github.com/timdrysdale/pdfcomment"
 	"github.com/timdrysdale/pool"
 	unicommon "github.com/timdrysdale/unipdf/v3/common"
