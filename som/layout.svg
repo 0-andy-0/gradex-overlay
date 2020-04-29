@@ -3882,7 +3882,7 @@
        ry="0.029109634"
        rx="1.4154898"
        y="-14.5"
-       x="0.49999997"
+       x="0"
        height="14"
        width="209"
        id="rect3057"
@@ -6195,12 +6195,12 @@
        sodipodi:cx="2.220446e-16"
        sodipodi:type="arc"
        id="path3902"
-       style="display:inline;opacity:1;fill:#ed1a1f;fill-opacity:1;stroke:none;stroke-width:0.49999997;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.44881821;stroke-opacity:1"
+       style="display:inline;opacity:1;fill:#ed1a1f;fill-opacity:1;stroke:none;stroke-width:0.5;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.44881821;stroke-opacity:1"
        inkscape:transform-center-y="6.0390301e-05">
       <desc
-         id="desc3950">./test/ladders-a4-portrait-header</desc>
+         id="desc3950">./som/script-info-mark</desc>
       <title
-         id="title3900">mark-header</title>
+         id="title3900">svg-mark-header</title>
     </path>
     <path
        sodipodi:open="true"

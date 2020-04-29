@@ -21,7 +21,6 @@ import (
 	"runtime"
 	"strings"
 	"flag"
-	"io/ioutil"
 	
 	"github.com/gocarina/gocsv"
 	"github.com/bsipos/thist"
@@ -67,68 +66,50 @@ func main() {
 	flag.Parse()
 
 	
-	
-	fmt.Println("Hello world")
-	
-	svgBytes, err := ioutil.ReadFile("test/sidebar-312pt-mark-flow.svg")
-	if err != nil {
-		fmt.Sprintf("Entity: error opening svg file sidebar-312pt-mark-flow")
-	}
-
-	ladder, err := parsesvg.DefineLadderFromSVG(svgBytes)
-
-	
-	
-	fmt.Println(ladder)
-	
-	
-	fmt.Println("Hello")
-	fmt.Println(partsAndMarksCSV)
-	
-	
 	// Deal with parts and marks
-	partsinfo := getPartsAndMarks("parts_and_marks.csv")
-	
+	if partsAndMarksCSV == "" {
+		// TODO - make this degrade gracefully by using an empty struct for partsinfo
+		// for now, we just force there to be a csv in the right place
+		partsAndMarksCSV = "parts_and_marks.csv"
+	}
+	partsinfo := getPartsAndMarks(partsAndMarksCSV)
+	/*
 	for _, part := range partsinfo {
 		fmt.Println("Part: ",part.Part)
 		fmt.Println("   ",part.Marks, " marks")
 		
-	}
+	}*/
+	fmt.Println("Parts and marks: ",len(partsinfo))
 	
-	fmt.Println(partsinfo)
+	// Set some general facts about the scripts
+	spread_contents := parsesvg.SpreadContents{CourseCode: courseCode, ExamDiet: examDiet, Marker: markerID}
 	
-	
-	
-	//os.Exit(1)
-	
-	
-	//
-	// Tim's stuff from here on
-	//
-	
-	if len(os.Args) < 2 {
-		fmt.Printf("Requires two arguments: layout spread input_path[s]\n")
-		fmt.Printf("Usage: gradex-overlay.exe layout spread input-*.pdf\n")
-		os.Exit(0)
-	}
-
-	//layoutSvg := os.Args[1]
-
-	//spreadName := os.Args[2]
-
-	var inputPath [1]string
-
-	inputPath[0] = "demo.pdf"//os.Args[3:] // TODO change to filewalk for cross platform!!
-
-	suffix := filepath.Ext(inputPath[0])
-
-	// sanity check
-	if suffix != ".pdf" {
-		fmt.Printf("Error: input path must be a .pdf\n")
+	// Make sure outputDir exists
+	err := ensureDir(outputDir)
+	if err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
+	
+	// Find all PDFs in the inputDir
+	err = ensureDir(inputDir)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	var input_pdfs = []string{}
+	filepath.Walk(inputDir, func(path string, f os.FileInfo, _ error) error {
+		if !f.IsDir() {
+			if filepath.Ext(f.Name()) == ".pdf" {
+				input_pdfs = append(input_pdfs, f.Name())
+			}
+		}
+		return nil
+	})
+	fmt.Println("input files: ",len(input_pdfs))
+	
 
-	N := len(inputPath)
+	N := len(input_pdfs)
 
 	pcChan := make(chan int, N)
 
@@ -136,10 +117,13 @@ func main() {
 
 	for i := 0; i < N; i++ {
 
-		inputPDF := inputPath[i]
+		inputPDF := input_pdfs[i]
 		spreadName := spreadName
+		spread_contents_new := spread_contents
+		spread_contents_new.Candidate = strings.TrimSuffix(inputPDF, filepath.Ext(inputPDF)) 
+		
 		newtask := pool.NewTask(func() error {
-			pc, err := doOneDoc(inputPDF, layoutSvg, spreadName, partsinfo, markerID)
+			pc, err := doOneDoc(inputPDF, inputDir, outputDir, layoutSvg, spreadName, partsinfo, spread_contents_new)
 			pcChan <- pc
 			return err
 		})
@@ -158,7 +142,7 @@ func main() {
 			select {
 			case pc := <-pcChan:
 				h.Update(float64(pc))
-				fmt.Println(h.Draw())
+				//fmt.Println(h.Draw())
 			case <-closed:
 				break LOOP
 			}
@@ -178,9 +162,10 @@ func main() {
 
 }
 
-func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parsesvg.PaperStructure, markerID string) (int, error) {
+func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts_and_marks []*parsesvg.PaperStructure, initialContents parsesvg.SpreadContents) (int, error) {
 
-	if strings.ToLower(filepath.Ext(inputPath)) != ".pdf" {
+	inputPath := inputDir+"/"+filename
+	if strings.ToLower(filepath.Ext(filename)) != ".pdf" {
 		return 0, errors.New(fmt.Sprintf("%s does not appear to be a pdf", inputPath))
 	}
 
@@ -188,20 +173,21 @@ func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parses
 	numPages, err := countPages(inputPath)
 
 	// render to images
-	jpegPath := "./jpg"
+	jpegPath := outputDir+"/jpg_pages"
 	err = ensureDir(jpegPath)
 	if err != nil {
 		return 0, err
 	}
-	suffix := filepath.Ext(inputPath)
-	basename := strings.TrimSuffix(inputPath, suffix)
-	jpegFileOption := fmt.Sprintf("%s/%s%%04d.jpg", jpegPath, basename)
+	suffix := filepath.Ext(filename)
+	basename := strings.TrimSuffix(filename, suffix)
+	jpegFileOption := fmt.Sprintf("%s/%s_%%04d.jpg", jpegPath, basename)
 
 	f, err := os.Open(inputPath)
 	if err != nil {
-		fmt.Println("Can't open pdf")
+		fmt.Println("Can't open pdf: ", inputPath, err)
 		os.Exit(1)
 	}
+	//fmt.Println("Reading PDF: ",inputPath)
 
 	pdfReader, err := pdf.NewPdfReader(f)
 	if err != nil {
@@ -220,13 +206,13 @@ func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parses
 
 	// convert images to individual pdfs, with form overlay
 
-	pagePath := "./pdf"
+	pagePath := outputDir+"/pdf_pages"
 	err = ensureDir(pagePath)
 	if err != nil {
 		return 0, err
 	}
 
-	pageFileOption := fmt.Sprintf("%s/%s%%04d.pdf", pagePath, basename)
+	pageFileOption := fmt.Sprintf("%s/%s_%%04d.pdf", pagePath, basename)
 
 	mergePaths := []string{}
 
@@ -239,6 +225,7 @@ func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parses
 
 		pageNumber := imgIdx - 1
 
+		/*
 		contents := parsesvg.SpreadContents{
 			SvgLayoutPath:     layoutSvg,
 			SpreadName:        spreadName,
@@ -247,7 +234,14 @@ func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parses
 			PdfOutputPath:     pageFilename,
 			Comments:          comments,
 			Marker:			   markerID,
-		}
+		}*/
+		contents := initialContents	
+		contents.SvgLayoutPath = layoutSvg
+		contents.SpreadName = spreadName
+		contents.PreviousImagePath = previousImagePath
+		contents.PageNumber = pageNumber
+		contents.PdfOutputPath = pageFilename
+		contents.Comments = comments
 
 		err := parsesvg.RenderSpreadExtra(contents, parts_and_marks)
 		if err != nil {
@@ -259,11 +253,15 @@ func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parses
 		mergePaths = append(mergePaths, pageFilename)
 	}
 
-	outputPath := fmt.Sprintf("%s-%s.pdf", basename, spreadName)
+	outputPath := fmt.Sprintf(outputDir+"/%s-%s.pdf", basename, spreadName)
 	err = mergePdf(mergePaths, outputPath)
 	if err != nil {
 		return 0, err
 	}
+	
+	fmt.Println("Created "+outputPath)
+	
+	// TODO - add in a "clean up the temporary jpgs/pdfs" step
 
 	return numPages, nil
 
@@ -271,8 +269,6 @@ func doOneDoc(inputPath, layoutSvg, spreadName string, parts_and_marks []*parses
 
 func getPartsAndMarks(csv_path string) []*parsesvg.PaperStructure {
 	
-	fmt.Println(csv_path)
-
 	marksFile, err := os.OpenFile(csv_path, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		fmt.Println("File: ",csv_path, err)
