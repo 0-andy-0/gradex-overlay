@@ -43,7 +43,7 @@ func main() {
     flag.StringVar(&courseCode, "course", "MATH00000", "to appear in the header")
 	
     var examDiet string
-    flag.StringVar(&examDiet, "diet", "April 2020", "to appear in the header")
+    flag.StringVar(&examDiet, "diet", "Summer 2020", "to appear in the header")
 	
 	var partsAndMarksCSV string
     flag.StringVar(&partsAndMarksCSV, "parts", "", "path to optional csv showing the question parts and associated marks")
@@ -65,7 +65,7 @@ func main() {
 		
 	flag.Parse()
 
-	
+	fmt.Println(partsAndMarksCSV)
 	// Deal with parts and marks
 	if partsAndMarksCSV == "" {
 		// TODO - make this degrade gracefully by using an empty struct for partsinfo
