@@ -62,23 +62,19 @@ func main() {
 	
 	var outputDir string
     flag.StringVar(&outputDir, "outputdir", "output_dir", "path of the folder where output files should go")
+	
+	var tmpFiles string
+    flag.StringVar(&tmpFiles, "tmpfiles", "discard", "whether to 'discard' or 'keep' the temporary jpg/pdf files from the process")
 		
 	flag.Parse()
 
 	fmt.Println(partsAndMarksCSV)
 	// Deal with parts and marks
-	if partsAndMarksCSV == "" {
-		// TODO - make this degrade gracefully by using an empty struct for partsinfo
-		// for now, we just force there to be a csv in the right place
-		partsAndMarksCSV = "parts_and_marks.csv"
+	partsinfo := []*parsesvg.PaperStructure{}
+	if partsAndMarksCSV != "" {
+		partsinfo = getPartsAndMarks(partsAndMarksCSV)
 	}
-	partsinfo := getPartsAndMarks(partsAndMarksCSV)
-	/*
-	for _, part := range partsinfo {
-		fmt.Println("Part: ",part.Part)
-		fmt.Println("   ",part.Marks, " marks")
-		
-	}*/
+
 	fmt.Println("Parts and marks: ",len(partsinfo))
 	
 	// Set some general facts about the scripts
@@ -159,6 +155,12 @@ func main() {
 		}
 	}
 	close(closed)
+	
+	// Clean up the temporary jpgs/pdfs
+	if tmpFiles == "discard" {
+		os.RemoveAll(outputDir+"/jpg_pages")
+		os.RemoveAll(outputDir+"/pdf_pages")
+	}
 
 }
 
@@ -261,8 +263,6 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 	
 	fmt.Println("Created "+outputPath)
 	
-	// TODO - add in a "clean up the temporary jpgs/pdfs" step
-
 	return numPages, nil
 
 }
