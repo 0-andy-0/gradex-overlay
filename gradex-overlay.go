@@ -65,6 +65,8 @@ func main() {
 	
 	var tmpFiles string
     flag.StringVar(&tmpFiles, "tmpfiles", "discard", "whether to 'discard' or 'keep' the temporary jpg/pdf files from the process")
+	
+	redoAll := flag.Bool("redo_all", false, "regenerate all the output PDFs even if they exist? (true/false)")
 		
 	flag.Parse()
 
@@ -119,7 +121,7 @@ func main() {
 		spread_contents_new.Candidate = strings.TrimSuffix(inputPDF, filepath.Ext(inputPDF)) 
 		
 		newtask := pool.NewTask(func() error {
-			pc, err := doOneDoc(inputPDF, inputDir, outputDir, layoutSvg, spreadName, partsinfo, spread_contents_new)
+			pc, err := doOneDoc(inputPDF, inputDir, outputDir, layoutSvg, spreadName, partsinfo, spread_contents_new, *redoAll)
 			pcChan <- pc
 			return err
 		})
@@ -164,7 +166,17 @@ func main() {
 
 }
 
-func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts_and_marks []*parsesvg.PaperStructure, initialContents parsesvg.SpreadContents) (int, error) {
+func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts_and_marks []*parsesvg.PaperStructure, initialContents parsesvg.SpreadContents, redoAll bool) (int, error) {
+
+	suffix := filepath.Ext(filename)
+	basename := strings.TrimSuffix(filename, suffix)
+	outputPath := fmt.Sprintf(outputDir+"/%s-%s.pdf", basename, spreadName)
+	
+	// Unless regenerating all output files, check that this file does not already exist
+	if !redoAll && fileExists(outputPath) {
+		fmt.Println("Skipped existing: "+outputPath)
+		return 0, nil
+	}
 
 	inputPath := inputDir+"/"+filename
 	if strings.ToLower(filepath.Ext(filename)) != ".pdf" {
@@ -180,8 +192,6 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 	if err != nil {
 		return 0, err
 	}
-	suffix := filepath.Ext(filename)
-	basename := strings.TrimSuffix(filename, suffix)
 	jpegFileOption := fmt.Sprintf("%s/%s_%%04d.jpg", jpegPath, basename)
 
 	f, err := os.Open(inputPath)
@@ -255,7 +265,6 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 		mergePaths = append(mergePaths, pageFilename)
 	}
 
-	outputPath := fmt.Sprintf(outputDir+"/%s-%s.pdf", basename, spreadName)
 	err = mergePdf(mergePaths, outputPath)
 	if err != nil {
 		return 0, err
@@ -281,4 +290,14 @@ func getPartsAndMarks(csv_path string) []*parsesvg.PaperStructure {
 		panic(err)
 	}
 	return parts
+}
+
+// fileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func fileExists(filename string) bool {
+    info, err := os.Stat(filename)
+    if os.IsNotExist(err) {
+        return false
+    }
+    return !info.IsDir()
 }
