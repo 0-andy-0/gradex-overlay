@@ -37,6 +37,8 @@ func main() {
 	
 	var outputDir string
     flag.StringVar(&outputDir, "outputdir", "output_dir", "path of the folder where output files should go")
+	
+	xmlOnly := flag.Bool("xmlonly", false, "generate only XML, no JPG? (true/false)")
 		
 	flag.Parse()
 
@@ -54,16 +56,22 @@ func main() {
 		os.Exit(1)
 	}
 	var input_pdfs = []string{}
+	max_pages := 0
 	filepath.Walk(inputDir, func(path string, f os.FileInfo, _ error) error {
 		if !f.IsDir() {
 			if filepath.Ext(f.Name()) == ".pdf" {
+				num_pages, _ := countPages(inputDir+"/"+f.Name())
+				if num_pages > max_pages {
+					max_pages = num_pages
+				}
 				input_pdfs = append(input_pdfs, f.Name())
 			}
 		}
 		return nil
 	})
 	fmt.Println("input files: ",len(input_pdfs))
-	
+	fmt.Println("maximum page length: ",max_pages)
+		
 
 	N := len(input_pdfs)
 
@@ -76,7 +84,7 @@ func main() {
 		inputPDF := input_pdfs[i]
 		
 		newtask := pool.NewTask(func() error {
-			pc, err := doOneDoc(inputPDF, inputDir, outputDir, courseCode)
+			pc, err := doOneDoc(inputPDF, inputDir, outputDir, courseCode, max_pages, xmlOnly)
 			pcChan <- pc
 			return err
 		})
@@ -115,7 +123,7 @@ func main() {
 
 }
 
-func doOneDoc(filename string, inputDir string, outputDir string, courseCode string) (int, error) {
+func doOneDoc(filename string, inputDir string, outputDir string, courseCode string, max_pages int, xmlOnly *bool) (int, error) {
 
 	suffix := filepath.Ext(filename)
 	basename := strings.TrimSuffix(filename, suffix)
@@ -143,13 +151,15 @@ func doOneDoc(filename string, inputDir string, outputDir string, courseCode str
 	}
 	fmt.Println("Reading PDF: ",inputPath)
 
-	err = convertPDFToJPEGs(inputPath, jpegPath, jpegFileOption)
-	if err != nil {
-		return 0, err
+	if !*xmlOnly {
+		err = convertPDFToJPEGs(inputPath, jpegPath, jpegFileOption)
+		if err != nil {
+			return 0, err
+		}
 	}
 	
 	// TODO - create the XML and store it in outputDir+"/"+basename
-	candidate_xml := makeXML(basename, numPages, courseCode)
+	candidate_xml := makeXML(basename, numPages, courseCode, max_pages)
     f, err := os.Create(jpegPath+".xml")
     check(err)
     defer f.Close()
@@ -160,12 +170,12 @@ func doOneDoc(filename string, inputDir string, outputDir string, courseCode str
 
 }
 
-func makeXML(ExamNo string, pages int, courseCode string) (string) {
+func makeXML(ExamNo string, pages int, courseCode string, max_pages int) (string) {
 
 	base_image_xml := `<Image>
             <PageNo>INT</PageNo>
             <ImageType>jpeg</ImageType>
-            <ImagePath>EXAMNO/EXAMNO_FORMATINT.jpg</ImagePath>
+            <ImagePath>EXAMNO\EXAMNO_FORMATINT.jpg</ImagePath>
         </Image>
 `
 	image_xml := ""
@@ -174,6 +184,13 @@ func makeXML(ExamNo string, pages int, courseCode string) (string) {
 		this_image = strings.ReplaceAll(this_image, "INT", fmt.Sprintf("%d", i))
 		image_xml = image_xml + this_image
 	}
+	if pages < max_pages {
+		for i := pages+1; i <= max_pages; i++ {
+			this_image := strings.ReplaceAll(base_image_xml, "EXAMNO\\EXAMNO_FORMATINT", "blankpage")
+			this_image = strings.ReplaceAll(this_image, "INT", fmt.Sprintf("%d", i))
+			image_xml = image_xml + this_image
+		}
+	}
 
 	overall_xml := `<?xml version="1.0" encoding="UTF-8"?>
 <CandidateScript>
@@ -181,7 +198,7 @@ func makeXML(ExamNo string, pages int, courseCode string) (string) {
     <CandidateName>EXAMNO</CandidateName>
     <UCI>EXAMNO</UCI>
     <ScanBatchID>SID0</ScanBatchID>
-    <ScanScriptID>1</ScanScriptID>
+    <ScanScriptID>1SCANSCRIPTID</ScanScriptID>
     <ScanDate>01/05/2020</ScanDate>
     <AtypicalStatus>Normal</AtypicalStatus>
     <RescanRequestID></RescanRequestID>
@@ -196,6 +213,7 @@ func makeXML(ExamNo string, pages int, courseCode string) (string) {
 	overall_xml = strings.ReplaceAll(overall_xml, "COURSECODE", courseCode)
 	overall_xml = strings.ReplaceAll(overall_xml, "IMAGEXML", image_xml)
 	overall_xml = strings.ReplaceAll(overall_xml, "EXAMNO", ExamNo)
+	overall_xml = strings.ReplaceAll(overall_xml, "SCANSCRIPTID", ExamNo[1:])
 	
 	return overall_xml
 
