@@ -203,7 +203,7 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 
 	pdfReader, err := pdf.NewPdfReader(f)
 	if err != nil {
-		fmt.Println("Can't read test pdf")
+		fmt.Println("Can't read test pdf", inputPath, err)
 		os.Exit(1)
 	}
 
