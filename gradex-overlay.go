@@ -21,10 +21,12 @@ import (
 	"runtime"
 	"strings"
 	"flag"
+	"regexp"
 	
 	"github.com/gocarina/gocsv"
 	"github.com/bsipos/thist"
 	"github.com/georgekinnear/parsesvg"
+	"github.com/georgekinnear/gradex-extract/pdfextract"
 	"github.com/timdrysdale/pdfcomment"
 	"github.com/timdrysdale/pool"
 	unicommon "github.com/timdrysdale/unipdf/v3/common"
@@ -118,7 +120,9 @@ func main() {
 		inputPDF := input_pdfs[i]
 		spreadName := spreadName
 		spread_contents_new := spread_contents
-		spread_contents_new.Candidate = strings.TrimSuffix(inputPDF, filepath.Ext(inputPDF)) 
+		//spread_contents_new.Candidate = strings.TrimSuffix(inputPDF, filepath.Ext(inputPDF))
+		findexamno, _ := regexp.Compile("(B[0-9]{6})")
+		spread_contents_new.Candidate = findexamno.FindStringSubmatch(inputPDF)[1]
 		
 		newtask := pool.NewTask(func() error {
 			pc, err := doOneDoc(inputPDF, inputDir, outputDir, layoutSvg, spreadName, partsinfo, spread_contents_new, *redoAll)
@@ -210,6 +214,10 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 	comments, err := pdfcomment.GetComments(pdfReader)
 
 	f.Close()
+	
+	// Get any existing form values that we care about
+	form_values := pdfextract.ReadFormFromPDF(inputPath, false)
+	fmt.Println(form_values)
 
 	err = convertPDFToJPEGs(inputPath, jpegPath, jpegFileOption)
 	if err != nil {
@@ -237,16 +245,6 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 
 		pageNumber := imgIdx - 1
 
-		/*
-		contents := parsesvg.SpreadContents{
-			SvgLayoutPath:     layoutSvg,
-			SpreadName:        spreadName,
-			PreviousImagePath: previousImagePath,
-			PageNumber:        pageNumber,
-			PdfOutputPath:     pageFilename,
-			Comments:          comments,
-			Marker:			   markerID,
-		}*/
 		contents := initialContents	
 		contents.SvgLayoutPath = layoutSvg
 		contents.SpreadName = spreadName
@@ -254,6 +252,12 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 		contents.PageNumber = pageNumber
 		contents.PdfOutputPath = pageFilename
 		contents.Comments = comments
+		if imgIdx == 1 && len(form_values)>0 {
+			contents.PreviousFields = make(map[string]string)
+			for _, field := range form_values {
+				contents.PreviousFields[field.Field] = field.Value
+			}
+		}
 
 		err := parsesvg.RenderSpreadExtra(contents, parts_and_marks)
 		if err != nil {
