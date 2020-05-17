@@ -564,11 +564,11 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.2140814"
-     inkscape:cx="151.75212"
-     inkscape:cy="218.66605"
+     inkscape:zoom="1.565592"
+     inkscape:cx="72.711941"
+     inkscape:cy="695.9589"
      inkscape:document-units="mm"
-     inkscape:current-layer="layer1"
+     inkscape:current-layer="layer2"
      showgrid="false"
      inkscape:window-width="2736"
      inkscape:window-height="1699"
@@ -596,26 +596,22 @@
      id="layer2"
      inkscape:label="chrome"
      style="display:inline;opacity:1">
-    <g
-       id="g1051"
-       transform="matrix(0.72652904,0,0,1.0005036,0.37339192,-0.0968969)">
-      <rect
-         style="opacity:1;fill:none;fill-opacity:1;stroke:#008000;stroke-width:0.74999994;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-         id="rect5157"
-         width="32.973522"
-         height="230.74892"
-         x="1.5583339"
-         y="76.923935"
-         ry="2.3146861" />
-      <rect
-         ry="0.41199943"
-         y="76.923935"
-         x="1.5583229"
-         height="5.7464685"
-         width="32.973518"
-         id="rect5159"
-         style="opacity:1;fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:0.75;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-    </g>
+    <rect
+       ry="2.3158517"
+       y="76.865776"
+       x="1.5055667"
+       height="230.86513"
+       width="23.956221"
+       id="rect5157"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#008000;stroke-width:0.63943595;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       style="opacity:1;fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:0.63943601;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect5159"
+       width="23.956219"
+       height="5.7493625"
+       x="1.5055587"
+       y="76.865776"
+       ry="0.41220692" />
     <text
        id="text5165"
        y="81.437019"
@@ -627,6 +623,38 @@
          y="81.437019"
          x="13.598855"
          sodipodi:role="line">Moderation</tspan></text>
+    <rect
+       ry="0.41220692"
+       y="302.0043"
+       x="1.5055587"
+       height="5.7493625"
+       width="23.956219"
+       id="rect1020"
+       style="opacity:1;fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:0.63943601;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <rect
+       ry="0"
+       rx="0"
+       y="302.561"
+       x="19.918882"
+       height="4.5666423"
+       width="4.9588814"
+       id="rect1028"
+       style="display:inline;opacity:1;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.29569092;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.44881821;stroke-opacity:1"
+       inkscape:label="#rect300">
+      <title
+         id="title1026">page-seen</title>
+    </rect>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.17499995px;line-height:1.25;font-family:comfortaa;-inkscape-font-specification:comfortaa;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
+       x="10.662499"
+       y="306.00516"
+       id="text1024"><tspan
+         sodipodi:role="line"
+         x="10.662499"
+         y="306.00516"
+         style="font-size:3.17499995px;text-align:center;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke-width:0.26458332"
+         id="tspan1022">Page seen</tspan></text>
   </g>
   <g
      inkscape:groupmode="layer"
@@ -651,7 +679,21 @@
      inkscape:groupmode="layer"
      id="layer5"
      inkscape:label="textfields"
-     style="display:inline" />
+     style="display:none">
+    <rect
+       inkscape:label="#rect300"
+       style="display:inline;opacity:1;fill:#00ffff;fill-opacity:1;stroke:none;stroke-width:0.29569092;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:9.44881821;stroke-opacity:1"
+       id="rec300-tab19"
+       width="4.9588814"
+       height="4.5666423"
+       x="19.918882"
+       y="302.561"
+       rx="0"
+       ry="0">
+      <title
+         id="title5537">page-seen</title>
+    </rect>
+  </g>
   <g
      inkscape:groupmode="layer"
      id="layer4"
@@ -660,7 +702,7 @@
      inkscape:groupmode="layer"
      id="layer1"
      inkscape:label="placeholders"
-     style="display:inline">
+     style="display:none">
     <rect
        ry="0"
        rx="0"

@@ -174,7 +174,9 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 
 	suffix := filepath.Ext(filename)
 	basename := strings.TrimSuffix(filename, suffix)
-	outputPath := fmt.Sprintf(outputDir+"/%s-%s.pdf", basename, spreadName)
+	find_examno, err := regexp.Compile("(B[0-9]{6})-.*.pdf")
+	filename_examno := find_examno.FindStringSubmatch(filename)[1]
+	outputPath := fmt.Sprintf(outputDir+"/%s-%s.pdf", filename_examno, spreadName)
 	
 	// Unless regenerating all output files, check that this file does not already exist
 	if !redoAll && fileExists(outputPath) {
@@ -217,7 +219,7 @@ func doOneDoc(filename, inputDir, outputDir, layoutSvg, spreadName string, parts
 	
 	// Get any existing form values that we care about
 	form_values := pdfextract.ReadFormFromPDF(inputPath, false)
-	fmt.Println(form_values)
+	//fmt.Println(form_values)
 
 	err = convertPDFToJPEGs(inputPath, jpegPath, jpegFileOption)
 	if err != nil {
